@@ -3,8 +3,12 @@
     <div class="hello">
       <h1>{{ msg }}</h1>
     </div>
+    <input type="text" v-model="groupName"/>
+    <button v-on:click="register">registra</button>
+    <br>
     <input type="text" v-model="messaggio"/>
-    <button v-on:click="sendMessage">invia</button>
+    <button v-on:click="sendMessage">invia a tutti</button>
+    <button v-on:click="sendMessageGroup">invia al gruppo</button>
     <button v-on:click="sendMessageApi">invia (api)</button>
     <ul v-if="messaggi">
       <li v-for="item in messaggi">{{ item }}</li>
@@ -19,6 +23,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      groupName: '',
       messaggio: '',
       messaggi: [],
       connection: null,
@@ -41,12 +46,18 @@ export default {
       this.connection.invoke('send', this.messaggio)
     },
     sendMessageApi () {
-      this.$http.post('http://localhost:5000/api/test', { messaggio: this.messaggio}, {  })
+      this.$http.post('http://localhost:5000/api/test/group/' + this.groupName, { messaggio: this.messaggio}, {  })
         .then(response => {
           console.log('messaggio inviato')
         }, response => {
           window.alert('errori in invio messaggio')
         })
+    },
+    sendMessageGroup () {
+      this.connection.invoke('sendGroup', this.groupName, this.messaggio)
+    },
+    register () {
+      this.connection.invoke('register', this.groupName, 'someKey');
     }
   }
 }
