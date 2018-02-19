@@ -5,6 +5,7 @@
     </div>
     <input type="text" v-model="messaggio"/>
     <button v-on:click="sendMessage">invia</button>
+    <button v-on:click="sendMessageApi">invia (api)</button>
     <ul v-if="messaggi">
       <li v-for="item in messaggi">{{ item }}</li>
     </ul>
@@ -38,6 +39,14 @@ export default {
   methods: {
     sendMessage () {
       this.connection.invoke('send', this.messaggio)
+    },
+    sendMessageApi () {
+      this.$http.post('http://localhost:5000/api/test', { messaggio: this.messaggio}, {  })
+        .then(response => {
+          console.log('messaggio inviato')
+        }, response => {
+          window.alert('errori in invio messaggio')
+        })
     }
   }
 }
